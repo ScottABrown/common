@@ -21,6 +21,26 @@ Handling null targets and criteria:
 
 Handling empty boolean combinations:
 
+Handling exceptions:
+-------------------------------
+By default, exceptions encountered while executing the check() method
+of a validator will be raised to the calling code. In some
+circumstances certain exceptions may indicate a condition that should
+be treated as a "pass" or a "fail" with the corresponding True or
+False return value.
+
+To facilitate this, exceptions can be designated for such handling at
+either the class or the instance level using the pass_exceptions and
+the fail_exceptions member variables.
+
+The instance variable has precedence over the class variable.
+
+A particular exception can occur in the instance's pass_exceptions and
+the class fail_exceptions or vice-versa, but the same exception can't
+occur in both the pass_exceptions and fail_exceptions at the same
+level of precedence. Attempting to add an exception to the second list
+at the same precedence level will result in a ValueError.
+
 """
 
 
@@ -55,16 +75,12 @@ class ComboValidator(Validator):
         """Class initializer."""
         criteria_as_list = list(criteria)
         if not all(isinstance(c, Validator) for c in criteria):
-            raise TypeError(ValidatorRequiredErrorMsg)
+            raise TypeError(ComboValidator.ValidatorRequiredErrorMsg)
         super(ComboValidator, self).__init__(criteria_as_list)
 
     def add(self, newcriterion):
         """Add a new criterion to the criteria list."""
         if not isinstance(newcriterion, Validator):
-            raise TypeError(ValidatorRequiredErrorMsg)
+            raise TypeError(ComboValidator.ValidatorRequiredErrorMsg)
 
         self.criteria.append(newcriterion)
-
-
-
-
